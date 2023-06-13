@@ -1,0 +1,452 @@
+
+      <html>
+        <head>
+          <title>DuckMartAPI</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta charset="UTF-8">
+        </head>
+        <body>
+          <div id='content'>
+      <h1 id="duckmart-api">DuckMart API</h1>
+<h2 id="live-apiduckmarttechhttpapiduckmarttech">Live: <a href="http://api.duckmart.tech">api.duckmart.tech</a></h2>
+<p>DuckMart API is a RESTful API built on ExpressJS and NodeJS that supports JSON based HTTP requests and responses. This API is designed to provide valuable information about the users of the e-commerce platform DuckMart.</p>
+<p>With DuckMart API, you can get detailed information about users, as well as a track of all the events that a user has performed on the DuckMart platform. The API is capable of converting JSON requests to SQL queries that are executed on the backend database, which is DuckDB in this case.</p>
+<h3 id="the-project-has-two-independent-components">The project has two independent components:</h3>
+<ul>
+<li>Data Import and Processing <code>[MANDATORY FOR FIRST TIME PROJECT SETUP]</code></li>
+<li>REST API</li>
+</ul>
+<h2 id="data-import-and-processing-flow">Data Import and Processing Flow</h2>
+<p><img src="https://user-images.githubusercontent.com/33064931/227743872-f06154a3-c3f3-4289-b6a6-d359a16876dc.png" alt="Screenshot from 2023-03-26 02-23-24" /></p>
+<h3 id="data-processing-transform"><strong>Data Processing/ Transform</strong></h3>
+<p><code>data</code> folder contains three folders for the following three types of files supported by DuckDB for import:</p>
+<ul>
+<li><strong>.csv</strong></li>
+<li><strong>.json</strong></li>
+<li><strong>.parguet</strong></li>
+</ul>
+<h4 id="transformpy-transforms-data-of-the-above-mentioned-files-into-one-another"><code>transform.py</code> transforms data of the above mentioned files into one another</h4>
+<p><strong>Steps to transform data from one format to other:</strong></p>
+<ol>
+<li>Add the data file to it's respective folder.</li>
+<li>Run transform.py with following syntax arguments:</li>
+</ol>
+<pre><code>hljs USAGE:
+    <span class="hljs-keyword">python3</span> transform.<span class="hljs-keyword">py</span> <span class="hljs-symbol">&lt;PATH_TO_SOURCE_FILE&gt;</span> <span class="hljs-symbol">&lt;PATH_TO_DESTINATION_FILE&gt;</span>
+ARGS:
+    <span class="hljs-symbol">&lt;PATH_TO_SOURCE_FILE&gt;</span> <span class="hljs-symbol">&lt;PATH_TO_DESTINATION_FILE&gt;</span>
+EXAMPLES:
+    <span class="hljs-keyword">python3</span> transform.<span class="hljs-keyword">py</span> csv/MOCK_DATA_USER.csv json/MOCK_DATA_USER.json
+    <span class="hljs-keyword">python3</span> transform.<span class="hljs-keyword">py</span> json/MOCK_DATA_USER.json json/MOCK_DATA_USER.parquet
+</code></pre>
+<ol start="3">
+<li>Converted file is saved in the destination.</li>
+</ol>
+<h3 id="data-import-loading"><strong>Data Import/ Loading</strong></h3>
+<p><code>DataFeeder.js</code> loads data form a scpecific file to a specific table on a specific server.</p>
+<p><strong>Steps to import data in the database:</strong></p>
+<ol>
+<li>Add the data file to it's respective folder.</li>
+<li>Run DataFeeder.js with following syntax arguments:</li>
+</ol>
+<pre><code>hljs USAGE:
+    <span class="hljs-keyword">node</span> <span class="hljs-title">DataFeeder</span>.js <span class="hljs-tag">&lt;TABLE_NAME&gt;</span> <span class="hljs-tag">&lt;PATH_TO_DATABASE_FILE&gt;</span> <span class="hljs-tag">&lt;PATH_TO_DATA_FILE&gt;</span>
+ARGS:
+    <span class="hljs-tag">&lt;PATH_TO_DATABASE_FILE&gt;</span> <span class="hljs-tag">&lt;PATH_TO_DATA_FILE&gt;</span>
+EXAMPLES:
+    <span class="hljs-keyword">node</span> <span class="hljs-title">DataFeeder</span>.js
+    <span class="hljs-keyword">node</span> <span class="hljs-title">DataFeeder</span>.js users ../db/duckmart.db ../data/csv/MOCK_DATA_USERS.csv
+    <span class="hljs-keyword">node</span> <span class="hljs-title">DataFeeder</span>.js events ../db/duckmart.db ../data/csv/MOCK_DATA_EVENTS.csv
+</code></pre>
+<blockquote>
+  <p>If the <code>.db</code> database file does not exist it is created.</p>
+</blockquote>
+<h2 id="rest-api-architecture">REST API Architecture</h2>
+<p><img src="https://user-images.githubusercontent.com/33064931/227743987-94743e84-05fb-4ede-ad66-65c333bdec72.png" alt="duckmart" /></p>
+<h3 id="the-project-is-build-on-a-modular-architecture-where-features-and-functionalities-and-distributed-among-modules-and-functions">The project is build on a modular architecture where features and functionalities and distributed among modules and functions.</h3>
+<h2 id="database-schema">Database Schema</h2>
+<p><img src="https://user-images.githubusercontent.com/33064931/227743904-ee8762e4-7847-4f59-b48b-3de4c66962ca.png" alt="Screenshot from 2023-03-26 03-14-34" /></p>
+<h1 id="documentation">Documentation:</h1>
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="endpoints">Endpoints:</h3>
+<ul>
+<li><strong>users:</strong> It provides user data based of the request filters. <a href="http://api.duckmart.tech/users">(api.duckmart.tech/users)</a></li>
+<li><strong>events:</strong> It provides events data based of the request filters. <a href="http://api.duckmart.tech/events">(api.duckmart.tech/events)</a></li>
+<li><strong>queries:</strong> It provides DuckDB-SQL queries to the request. <a href="http://api.duckmart.tech/queries">(api.duckmart.tech/queries)</a></li>
+</ul>
+<h3 id="post-request-format">POST Request Format:</h3>
+<pre><code class="hljs json language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;columns&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-string">&quot;user_id&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;name&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;age&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;gender&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;device_type&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;event_name&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;user_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;077de7b4-9c34-4120-8b47-f5a63165bd5b&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ardelia Petche&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;range&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-number">20</span><span class="hljs-punctuation">,</span><span class="hljs-number">50</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;gender&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;Male&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;Female&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;location&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;China&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;signup_date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;range&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-string">&quot;02-02-2023&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;20-05-2024&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;subscription_plan&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Pro&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;device_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile&quot;</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p>Response to the above request on <a href="http://api.duckmart.teck/users">api.duckmart.tech/users</a>:</p>
+<pre><code class="hljs json language-json"><span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;user_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;077de7b4-9c34-4120-8b47-f5a63165bd5b&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ardelia Petche&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">43</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;gender&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Female&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;device_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;event_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LOGOUT&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2022-08-13T00:00:00.000Z&quot;</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;user_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;077de7b4-9c34-4120-8b47-f5a63165bd5b&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ardelia Petche&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">43</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;gender&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Female&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;device_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;event_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;LOGOUT&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2022-07-07T00:00:00.000Z&quot;</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">]</span>
+</code></pre>
+<p><strong>The JSON payload has two basic categories of items/filters:</strong></p>
+<ul>
+<li><strong>Columns Filter :</strong> Specifies which columns are to be presented. If not specified explicitly all the columns of the endpoint's table are presented.</li>
+<li><strong>Search Filter :</strong> Specifies the search parameters. Data is searched in the database based of these filters.</li>
+</ul>
+<p>In the above example <code>columns</code> is a column filter specifying which columns to present.</p>
+<pre><code class="hljs json language-json"><span class="hljs-attr">&quot;columns&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-string">&quot;user_id&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;name&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;age&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;gender&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;device_type&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;event_name&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;timestamp&quot;</span><span class="hljs-punctuation">]</span>
+</code></pre>
+<p>On the other hand, <code>user_id</code>,<code>name</code>,<code>age</code>,<code>location</code>, etc are search filters defining attributes that are matched and evaluated for reponse.</p>
+<pre><code class="hljs json language-json">    <span class="hljs-attr">&quot;user_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;077de7b4-9c34-4120-8b47-f5a63165bd5b&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ardelia Petche&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;range&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-number">20</span><span class="hljs-punctuation">,</span><span class="hljs-number">50</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;gender&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;Male&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;Female&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;location&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;China&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;signup_date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;range&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-string">&quot;02-02-2023&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-string">&quot;20-05-2024&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;subscription_plan&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Pro&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;device_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Mobile&quot;</span>
+</code></pre>
+<p>Search and Column filters are all the columns of <code>users</code> and <code>events</code> tables combined:</p>
+<ul>
+<li>user_id</li>
+<li>name</li>
+<li>age</li>
+<li>gender</li>
+<li>signup_date</li>
+<li>subscription_plan</li>
+<li>device_type</li>
+<li>event_name</li>
+<li>timestamp</li>
+</ul>
+<p><strong>Special Value Types:</strong></p>
+<ul>
+<li><strong>range:</strong> Range is used to match for a list of values that fall within a range. It can only be applied to <code>Iterable</code> types.<br />
+Iterable types are:</li>
+<li>age</li>
+<li>signup_date</li>
+<li>timestamp</li>
+</ul>
+<p>Syntax:</p>
+<pre><code>hljs <span class="hljs-symbol">attribute:</span> { <span class="hljs-string">&quot;range&quot;</span>:[lower_bound,upper_bound] }
+</code></pre>
+<p>Example:      </p>
+<pre><code class="hljs json language-json"><span class="hljs-attr">&quot;range&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-number">10</span><span class="hljs-punctuation">,</span><span class="hljs-number">50</span><span class="hljs-punctuation">]</span>
+</code></pre>
+<p><br></p>
+<ul>
+<li><strong>list:</strong> Used to match for all the items specified within the list, i.e. inside the block brackets <code>[]</code>.</li>
+</ul>
+<p>Syntax:</p>
+<pre><code>hljs <span class="hljs-attribute">attribute</span>:<span class="hljs-meta"> [value1, value2, value3, ...]</span>
+</code></pre>
+<p>Example:</p>
+<pre><code class="hljs json language-json"><span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-number">10</span><span class="hljs-punctuation">,</span><span class="hljs-number">50</span><span class="hljs-punctuation">]</span>
+</code></pre>
+<h3 id="response-is-a-standard-json-object">Response is a standard JSON object.</h3>
+<h2 id="tech-stack">Tech Stack:</h2>
+<ul>
+<li>NodeJS</li>
+<li>ExpressJS</li>
+<li>DuckDB</li>
+<li>Python</li>
+<li>Regex</li>
+<li>Pandas</li>
+<li>DigitalOcean Droplet</li>
+</ul>
+<h1 id="features-of-duckmart-api">Features of DuckMart API</h1>
+<ul>
+<li><strong>Scalable, Robust and Reliable:</strong> DuckMart API is built on the Express framework, which is designed to handle <code>high-traffic</code> applications with ease. The API is also designed to be <code>horizontally scalable</code>, meaning that it can be deployed across multiple servers to handle increasing loads.</li>
+<li><strong>Responsible Error Handling:</strong> The API is designed to <code>handle errors gracefully</code> and provide meaningful error messages and status codes to users.</li>
+<li><strong>Secure:</strong> DuckMart API takes security seriously and implements measures to protect against common security threats. For example, the API is designed to prevent <code>SQL injection</code> attacks by using prepared statements, parameterized queries and regular expressions (regex).</li>
+<li><strong>Architecture Support:</strong> DuckMart API supports both <code>monolithic and microservice</code> architectures. The monolithic architecture is suitable for small to medium-sized applications that can be easily managed within a single codebase. The microservice architecture is suitable for large, complex applications that require more scalability and flexibility.</li>
+<li><strong>Highly automate-able:</strong> DuckMart API is designed to be highly automatable, thanks to its design choices, modularity and CLI-based approach to scripts, it can be <code>easily automated</code> using scripts and can be pipelined in CI/CD workflows with GitHub Actions as well.</li>
+</ul>
+<h1 id="development">Development</h1>
+<ol>
+<li>Install Node.js and NPM on your machine. [version <code>18</code>.x recommended]</li>
+<li>Clone the DuckMart API repository from GitHub.</li>
+<li>Install the required dependencies using NPM</li>
+</ol>
+<pre><code class="hljs bash language-bash">npm install
+</code></pre>
+<pre><code class="hljs bash language-bash">npm i nodemon -D
+</code></pre>
+<pre><code class="hljs bash language-bash">npm i nodemon -D -g
+</code></pre>
+<ol start="4">
+<li>Create a <code>.env</code> file with the following content:</li>
+</ol>
+<pre><code>hljs <span class="hljs-keyword">PORT</span>=[<span class="hljs-keyword">PORT</span> YOU WANT <span class="hljs-keyword">TO</span> SPECIFY]
+</code></pre>
+<ol start="5">
+<li>Perform the initial data transformation and data import steps to create a <code>.db</code> persistend database file as decribed above in Data Import steps.</li>
+<li>Start the API server using the <code>nodemon index.js</code> command.</li>
+</ol>
+<pre><code class="hljs bash language-bash">nodemon index.js
+</code></pre>
+<ol start="7">
+<li>Use an HTTP client or Postman to make requests to the API.</li>
+</ol>
+<h1 id="conclusion">Conclusion</h1>
+<p>DuckMart API is a reliable, scalable, and robust choice for any ecommerce platform. With its support for both monolithic and microservice architectures, and its implementation of security measures like protection against SQL injection, DuckMart API is the perfect choice for any business looking to build a robust and secure ecommerce platform.</p>
+<h1 id="support">Support</h1>
+<p>You can reach out to me on the below handles:</p>
+<p align="center">
+  <a href="https://www.linkedin.com/in/ayush-dubey-/"><img width="32px" alt="LinkedIn" title="LinkedIn" src="https://user-images.githubusercontent.com/33064931/192891277-e2528754-fdca-473a-be7a-25149ae295c8.png"></a>
+  &#8287;&#8287;&#8287;&#8287;&#8287;
+  <a href="https://www.instagram.com/_iam.ayush_/"><img width="32px" alt="Instagram" title="Instagram" src="https://user-images.githubusercontent.com/33064931/192891342-3c88a026-50f3-430d-b582-96a57b019e32.png"/></a>
+  &#8287;&#8287;&#8287;&#8287;&#8287;
+  <a href="https://www.youtube.com/c/ADIDAT"><img width="32px" alt="Youtube" title="Youtube" src="https://user-images.githubusercontent.com/33064931/192891435-24b5573e-5715-484a-b398-1db38348d9ea.png"/></a>
+  &#8287;&#8287;&#8287;&#8287;&#8287;
+  <a href="https://twitter.com/thatshityguy"><img width="32px" alt="Twitter" title="Twitter" src="https://user-images.githubusercontent.com/33064931/192891530-8660cc3a-3721-4609-a99d-010d7dd5d6d7.png"/></a>
+  &#8287;&#8287;&#8287;&#8287;&#8287;
+</p>
+<p>&nbsp;</p>
+<p><br> &nbsp;</p>
+<hr />
+
+          </div>
+          <style type='text/css'>body {
+    font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #111;
+    background-color: #fbfbfb;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-feature-settings: "kern" 1;
+    -moz-font-feature-settings: "kern" 1;
+    -o-font-feature-settings: "kern" 1;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+    padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+    body>#content {
+        padding: 0px 20px 20px 20px !important;
+    }
+}
+
+body>#content {
+    margin: 0px;
+    max-width: 900px;
+    border: 1px solid #e1e4e8;
+    padding: 10px 40px;
+    padding-bottom: 20px;
+    border-radius: 2px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+summary {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+hr {
+    color: #bbb;
+    background-color: #bbb;
+    height: 1px;
+    flex: 0 1 auto;
+    margin: 1em 0;
+    padding: 0;
+    border: none;
+}
+
+.hljs-operator {
+    color: #868686;
+    /* There is a bug where the syntax highlighter would pick no color for e.g. `&&` symbols in the code samples. Let's overwrite this */
+}
+
+
+/**
+ * Links
+ */
+
+a {
+    color: #0366d6;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #0366d6;
+}
+
+a:hover {
+    color: #0366d6;
+    text-decoration: underline;
+}
+
+pre {
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    font-size: 85%;
+    line-height: 1.45;
+    overflow: auto;
+    padding: 16px;
+}
+
+
+/**
+  * Code blocks
+  */
+
+code {
+    background-color: rgba(27, 31, 35, .05);
+    border-radius: 3px;
+    font-size: 85%;
+    margin: 0;
+    word-wrap: break-word;
+    padding: .2em .4em;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+}
+
+pre>code {
+    background-color: transparent;
+    border: 0;
+    display: inline;
+    line-height: inherit;
+    margin: 0;
+    overflow: visible;
+    padding: 0;
+    word-wrap: normal;
+    font-size: 100%;
+}
+
+
+/**
+ * Blockquotes
+ */
+
+blockquote {
+    margin-left: 30px;
+    margin-top: 0px;
+    margin-bottom: 16px;
+    border-left-width: 3px;
+    padding: 0 1em;
+    color: #828282;
+    border-left: 4px solid #e8e8e8;
+    padding-left: 15px;
+    font-size: 18px;
+    letter-spacing: -1px;
+    font-style: italic;
+}
+
+blockquote * {
+    font-style: normal !important;
+    letter-spacing: 0;
+    color: #6a737d !important;
+}
+
+
+/**
+ * Tables
+ */
+
+table {
+    border-spacing: 2px;
+    display: block;
+    font-size: 14px;
+    overflow: auto;
+    width: 100%;
+    margin-bottom: 16px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+th {
+    font-weight: 600;
+    padding: 6px 13px;
+    border: 1px solid #dfe2e5;
+}
+
+tr {
+    background-color: #fff;
+    border-top: 1px solid #c6cbd1;
+}
+
+table tr:nth-child(2n) {
+    background-color: #f6f8fa;
+}
+
+
+/**
+ * Others
+ */
+
+img {
+    max-width: 100%;
+}
+
+p {
+    line-height: 24px;
+    font-weight: 400;
+    font-size: 16px;
+    color: #24292e;
+}
+
+ul {
+    margin-top: 0;
+}
+
+li {
+    color: #24292e;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+li+li {
+    margin-top: 0.25em;
+}
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: #24292e;
+}
+
+a:visited {
+    color: #0366d6;
+}
+
+h1,
+h2,
+h3 {
+    border-bottom: 1px solid #eaecef;
+    color: #111;
+    /* Darker */
+}
+
+code>* {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+}</style>
+          <style type='text/css'>pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#282c34}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style>
+        </body>
+      </html>
